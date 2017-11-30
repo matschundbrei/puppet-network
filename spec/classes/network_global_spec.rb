@@ -141,7 +141,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect {
-          should raise_error(Puppet::Error, /$gateway is not an IP address./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end
@@ -151,7 +151,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect {
-          should raise_error(Puppet::Error, /$ipv6gateway is not an IPv6 address./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end
@@ -161,7 +161,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect {
-          should raise_error(Puppet::Error, /$vlan must be either "yes" or "no"./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end
@@ -171,7 +171,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect { 
-          should raise_error(Puppet::Error, /$ipv6networking is not a boolean.  It looks to be a String./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end
@@ -181,7 +181,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect {
-          should raise_error(Puppet::Error, /$manage_hwaddr is not a boolean.  It looks to be a String./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end
@@ -193,7 +193,7 @@ describe 'network::global', :type => 'class' do
 
       it 'should fail' do
         expect { 
-          should raise_error(Puppet::Error, /$requestreopen is not a boolean.  It looks to be a String./)
+          should raise_error(Puppet::PreformattedError)
         }
       end
     end

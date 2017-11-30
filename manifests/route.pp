@@ -41,18 +41,11 @@
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
 #
 define network::route (
-  $ipaddress,
-  $netmask,
-  $gateway,
-  $restart = true,
+  Optional[Variant[Stdlib::Compat::Ipv4, Array[Stdlib::Compat::Ipv4]]]  $ipaddress,
+  Optional[Variant[Stdlib::Compat::Ipv4, Array[Stdlib::Compat::Ipv4]]]  $netmask,
+  Optional[Variant[Stdlib::Compat::Ipv4, Array[Stdlib::Compat::Ipv4]]]  $gateway,
+  Optional[Boolean]                                                     $restart = true,
 ) {
-  # Validate our arrays
-  validate_array($ipaddress)
-  validate_array($netmask)
-  validate_array($gateway)
-  # Validate our booleans
-  validate_bool($restart)
-
   include '::network'
 
   $interface = $name

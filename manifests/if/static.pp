@@ -57,46 +57,40 @@
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
 #
 define network::if::static (
-  $ensure,
-  $ipaddress = undef,
-  $netmask = undef,
-  $gateway = undef,
-  $ipv6address = undef,
-  $ipv6init = false,
-  $ipv6gateway = undef,
-  $macaddress = undef,
-  $manage_hwaddr = true,
-  $ipv6autoconf = false,
-  $userctl = false,
-  $mtu = undef,
-  $ethtool_opts = undef,
-  $peerdns = false,
-  $ipv6peerdns = false,
-  $dns1 = undef,
-  $dns2 = undef,
-  $domain = undef,
-  $linkdelay = undef,
-  $scope = undef,
-  $flush = false,
-  $zone = undef,
-  $defroute = undef,
-  $metric = undef,
-  $restart = true,
-  $arpcheck = true,
-  $vlan = undef,
+    Enum['up','down']                                                 $ensure,
+  Optional[Stdlib::Compat::Ipv4]                                      $ipaddress    = undef,
+  Optional[Stdlib::Compat::Ipv4]                                      $netmask      = undef,
+  Optional[Stdlib::Compat::Ipv4]                                      $gateway      = undef,
+  Optional[Stdlib::MAC]                                               $macaddress   = undef,
+  Optional[String]                                                    $mtu          = undef,
+  Optional[String]                                                    $ethtool_opts = undef,
+  Optional[Boolean]                                                   $peerdns      = false,
+  Optional[Boolean]                                                   $ipv6init     = false,
+  Optional[Variant[Network::IpV6cidr, Array[Network::IpV6cidr]]]$ipv6address  = undef,
+  Optional[Network::IpV6cidr]                                      $ipv6gateway  = undef,
+  Optional[Boolean]                                                   $ipv6peerdns  = false,
+  Optional[Stdlib::Compat::Ipv4]                                      $dns1         = undef,
+  Optional[Stdlib::Compat::Ipv4]                                      $dns2         = undef,
+  Optional[String]                                                    $domain       = undef,
+  Optional[String]                                                    $zone         = undef,
+  Optional[String]                                                    $defroute     = undef,
+  Optional[String]                                                    $metric       = undef,
+  Optional[Boolean]                                                   $restart      = true,
+  Optional[Boolean]                                                   $userctl      = undef,
+  Optional[Enum['yes','no']]                                          $vlan         = undef,
+  Optional[String]                                                    $linkdelay    = undef,
+  Optional[String]                                                    $scope        = undef,
+  Optional[Boolean]                                                   $flush        = false,
+  Optional[Boolean]                                                   $arpcheck     = true,
+  Optional[Boolean]                                                   $ipv6autoconf = true,
+  Optional[Boolean]                                                   $manage_hwaddr= true,
 ) {
-  # Validate our data
-  if $ipaddress {
-    if ! is_ip_address($ipaddress) { fail("${ipaddress} is not an IP address.") }
-  }
   if is_array($ipv6address) {
     if size($ipv6address) > 0 {
-      validate_ip_address { $ipv6address: }
       $primary_ipv6address = $ipv6address[0]
       $secondary_ipv6addresses = delete_at($ipv6address, 0)
     }
   } elsif $ipv6address {
-    if ! is_ip_address($ipv6address) { fail("${ipv6address} is not an IPv6 address.") }
     $primary_ipv6address = $ipv6address
     $secondary_ipv6addresses = undef
   } else {
@@ -104,27 +98,12 @@ define network::if::static (
     $secondary_ipv6addresses = undef
   }
 
-  if ! is_mac_address($macaddress) {
+  if $macaddress {
+    $macaddy = $macaddress
+  } else{
     # Strip off any tailing VLAN (ie eth5.90 -> eth5).
     $title_clean = regsubst($title,'^(\w+)\.\d+$','\1')
     $macaddy = getvar("::macaddress_${title_clean}")
-  } else {
-    $macaddy = $macaddress
-  }
-  # Validate booleans
-  validate_bool($userctl)
-  validate_bool($ipv6init)
-  validate_bool($ipv6autoconf)
-  validate_bool($peerdns)
-  validate_bool($ipv6peerdns)
-  validate_bool($manage_hwaddr)
-  validate_bool($flush)
-  validate_bool($arpcheck)
-
-  # Validate our regular expressions
-  if $vlan {
-    $states = [ '^yes$', '^no$' ]
-    validate_re($vlan, $states, '$vlan must be either "yes" or "no".')
   }
 
   network_if_base { $title:

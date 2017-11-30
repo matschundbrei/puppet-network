@@ -36,22 +36,14 @@
 # Copyright (C) 2013 Mike Arnold, unless otherwise noted.
 #
 define network::bridge::dynamic (
-  $ensure,
-  $bootproto = 'dhcp',
-  $userctl = false,
-  $stp = false,
-  $delay = '30',
-  $bridging_opts = undef,
-  $restart = true,
+  Enum['up','down']   $ensure,
+  Optional[String]    $bootproto      = 'dhcp',
+  Optional[Boolean]   $userctl        = false,
+  Optional[Boolean]   $stp            = false,
+  Optional[String]    $delay          = '30',
+  Optional[String]    $bridging_opts  = undef,
+  Optional[Boolean]   $restart        = true,
 ) {
-  # Validate our regular expressions
-  $states = [ '^up$', '^down$' ]
-  validate_re($ensure, $states, '$ensure must be either "up" or "down".')
-  # Validate booleans
-  validate_bool($userctl)
-  validate_bool($stp)
-  validate_bool($restart)
-
   ensure_packages(['bridge-utils'])
 
   include '::network'

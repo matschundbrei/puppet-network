@@ -34,34 +34,25 @@
 # Copyright (C) 2017 Mike Arnold, unless otherwise noted.
 #
 define network::if (
-  $ensure,
-  $manage_hwaddr = true,
-  $macaddress = undef,
-  $userctl = false,
-  $mtu = undef,
-  $ethtool_opts = undef,
-  $scope = undef,
-  $flush = false,
-  $zone = undef,
-  $restart = true,
+  Enum['up','down']       $ensure,
+  Optional[Boolean]       $manage_hwaddr  = true,
+  Optional[Stdlib::MAC]   $macaddress = undef,
+  Optional[Boolean]       $userctl        = false,
+  Optional[String]        $mtu            = undef,
+  Optional[String]        $ethtool_opts   = undef,
+  Optional[String]        $scope          = undef,
+  Optional[Boolean]       $flush          = false,
+  Optional[String]        $zone           = undef,
+  Optional[Boolean]       $restart        = true,
 ) {
-  # Validate our regular expressions
-  $states = [ '^up$', '^down$' ]
-  validate_re($ensure, $states, '$ensure must be either "up" or "down".')
-
-  if ! is_mac_address($macaddress) {
+  # insert macadress from interface title, if not set
+  if $macaddress {
+    $macaddy = $macaddress
+  } else {
     # Strip off any tailing VLAN (ie eth5.90 -> eth5).
     $title_clean = regsubst($title,'^(\w+)\.\d+$','\1')
     $macaddy = getvar("::macaddress_${title_clean}")
-  } else {
-    $macaddy = $macaddress
   }
-
-  # Validate booleans
-  validate_bool($userctl)
-  validate_bool($manage_hwaddr)
-  validate_bool($flush)
-  validate_bool($restart)
 
   network_if_base { $title:
     ensure        => $ensure,

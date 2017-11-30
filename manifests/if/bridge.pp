@@ -31,22 +31,21 @@
 # Copyright (C) 2013 Alex Barbur, unless otherwise noted.
 #
 define network::if::bridge (
-  $ensure,
-  $bridge,
-  $mtu = undef,
-  $ethtool_opts = undef,
-  $macaddress = undef,
-  $restart = true,
+  Enum['up','down']     $ensure,
+  Optional[String]      $bridge,
+  Optional[String]      $mtu          = undef,
+  Optional[String]      $ethtool_opts = undef,
+  Optional[Stdlib::MAC] $macaddress   = undef,
+  Optional[Boolean]     $restart      = true,
 ) {
   # Validate our regular expressions
   $states = [ '^up$', '^down$' ]
   validate_re($ensure, $states, '$ensure must be either "up" or "down".')
-
-  if $macaddress == undef {
-    $macaddy = '' # lint:ignore:empty_string_assignment
+  if($macaddress) {
+    $macaddy = $macaddress
   }
   else {
-    $macaddy = $macaddress
+    $macaddy = '' # lint:ignore:empty_string_assignment
   }
 
   network_if_base { $title:
