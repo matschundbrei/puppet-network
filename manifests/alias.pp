@@ -37,17 +37,17 @@
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
 #
 define network::alias (
-  Enum['up','down']                                 $ensure,
-  Optional[Stdlib::Compat::Ipv4]                    $ipaddress,
-  Optional[Stdlib::Compat::Ipv4]                    $netmask,
-  Optional[Stdlib::Compat::Ipv4]                    $gateway        = undef,
-  Optional[Boolean]                                 $noaliasrouting = false,
-  Optional[Network::IpV6cidr]  $ipv6address    = undef,
-  Optional[Network::IpV6cidr]  $ipv6gateway    = undef,
-  Optional[Boolean]                                 $userctl        = false,
-  Optional[String]                                  $zone           = undef,
-  Optional[String]                                  $metric         = undef,
-  Optional[Boolean]                                 $restart        = true,
+  Enum['up','down']               $ensure,
+  Optional[Stdlib::Compat::Ipv4]  $ipaddress,
+  Optional[Stdlib::Compat::Ipv4]  $netmask,
+  Optional[Stdlib::Compat::Ipv4]  $gateway        = undef,
+  Optional[Boolean]               $noaliasrouting = false,
+  Optional[Network::IpV6cidr]     $ipv6address    = undef,
+  Optional[Network::IpV6cidr]     $ipv6gateway    = undef,
+  Optional[Boolean]               $userctl        = false,
+  Optional[String]                $zone           = undef,
+  Optional[String]                $metric         = undef,
+  Optional[Boolean]               $restart        = true,
 ) {
 
   network_if_base { $title:

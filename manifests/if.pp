@@ -36,7 +36,7 @@
 define network::if (
   Enum['up','down']       $ensure,
   Optional[Boolean]       $manage_hwaddr  = true,
-  Optional[Stdlib::MAC]   $macaddress = undef,
+  Optional[Stdlib::MAC]   $macaddress     = undef,
   Optional[Boolean]       $userctl        = false,
   Optional[String]        $mtu            = undef,
   Optional[String]        $ethtool_opts   = undef,

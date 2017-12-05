@@ -34,12 +34,12 @@
 #
 define network::bridge (
   Enum['up','down'] $ensure,
-  Optional[Boolean] $userctl = false,
-  Optional[Boolean] $stp = false,
-  Optional[String]  $delay = '30',
-  Optional[String]  $bridging_opts = undef,
-  Optional[Boolean] $ipv6init = false,
-  Optional[Boolean] $restart = true,
+  Optional[Boolean] $userctl        = false,
+  Optional[Boolean] $stp            = false,
+  Optional[String]  $delay          = '30',
+  Optional[String]  $bridging_opts  = undef,
+  Optional[Boolean] $ipv6init       = false,
+  Optional[Boolean] $restart        = true,
 ) {
   ensure_packages(['bridge-utils'])
 

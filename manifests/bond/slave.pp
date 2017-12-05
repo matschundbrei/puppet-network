@@ -40,15 +40,15 @@
 #
 define network::bond::slave (
   String                $master,
-  Optional[Stdlib::MAC] $macaddress = undef,
+  Optional[Stdlib::MAC] $macaddress   = undef,
   Optional[String]      $ethtool_opts = undef,
-  Optional[String]      $zone = undef,
-  Optional[String]      $defroute = undef,
-  Optional[String]      $metric = undef,
-  Optional[Boolean]     $restart = true,
-  Optional[Boolean]     $userctl = false,
-  Optional[String]      $bootproto = undef,
-  Optional[String]      $onboot = undef,
+  Optional[String]      $zone         = undef,
+  Optional[String]      $defroute     = undef,
+  Optional[String]      $metric       = undef,
+  Optional[Boolean]     $restart      = true,
+  Optional[Boolean]     $userctl      = false,
+  Optional[String]      $bootproto    = undef,
+  Optional[String]      $onboot       = undef,
 ) {
   include '::network'
 

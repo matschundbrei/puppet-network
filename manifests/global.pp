@@ -65,7 +65,7 @@ class network::global (
   Optional[Stdlib::Compat::Ipv4]  $gateway        = undef,
   Optional[String]                $gatewaydev     = undef,
   Optional[Enum['yes','no']]      $vlan           = undef,
-  Optional[Network::IpV6cidr]  $ipv6gateway    = undef,
+  Optional[Network::IpV6cidr]     $ipv6gateway    = undef,
   Optional[String]                $ipv6defaultdev = undef,
   Optional[String]                $nisdomain      = undef,
   Optional[Boolean]               $ipv6networking = false,

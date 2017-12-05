@@ -43,10 +43,10 @@ define network::alias::range (
   Stdlib::Compat::Ipv4            $ipaddress_end,
   String                          $clonenum_start,
   Optional[Boolean]               $noaliasrouting = false,
-  Optional[Boolean]               $restart = true,
-  Optional[Stdlib::Compat::Ipv4]  $netmask = undef,
-  Optional[Stdlib::Compat::Ipv4]  $broadcast = undef,
-  Optional[Boolean]               $arpcheck = true,
+  Optional[Boolean]               $restart        = true,
+  Optional[Stdlib::Compat::Ipv4]  $netmask        = undef,
+  Optional[Stdlib::Compat::Ipv4]  $broadcast      = undef,
+  Optional[Boolean]               $arpcheck       = true,
 ) {
   include '::network'
 
