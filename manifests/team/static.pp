@@ -11,7 +11,7 @@
 #   $gateway      - optional
 #   $mtu          - optional
 #   $ethtool_opts - optional
-#   $bonding_opts - optional
+#   $team_config  - required - hash
 #   $zone         - optional
 #   $defroute     - optional
 #   $restart      - optional - defaults to true
@@ -21,7 +21,6 @@
 # === Actions:
 #
 # Deploys the file /etc/sysconfig/network-scripts/ifcfg-$name.
-# Updates /etc/modprobe.conf with bonding driver parameters.
 #
 # === Sample Usage:
 #
@@ -35,19 +34,21 @@
 # === Authors:
 #
 # Mike Arnold <mike@razorsedge.org>
+# Jan Kapellen <jan.kapellen@gigacodes.de>
 #
 # === Copyright:
 #
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
+# Copyright (C) 2017 Jan Kapellen
 #
-define network::bond::static (
+define network::team::static (
   Enum['up','down']                $ensure,
   Optional[Stdlib::Compat::Ipv4]   $ipaddress    = undef,
   Optional[Stdlib::Compat::Ipv4]   $netmask      = undef,
   Optional[Stdlib::Compat::Ipv4]   $gateway      = undef,
   Optional[String]                 $mtu          = undef,
   Optional[String]                 $ethtool_opts = undef,
-  Optional[String]                 $bonding_opts = 'miimon=100',
+  Hash                             $team_config  = { runner => { name => 'activebackup' }, link_watch => { name => 'ethtool' }, },
   Optional[Boolean]                $peerdns      = false,
   Optional[Boolean]                $ipv6init     = false,
   Optional[Network::IpV6cidr]      $ipv6address  = undef,
@@ -71,7 +72,7 @@ define network::bond::static (
     bootproto    => 'none',
     mtu          => $mtu,
     ethtool_opts => $ethtool_opts,
-    bonding_opts => $bonding_opts,
+    team_config  => $team_config,
     peerdns      => $peerdns,
     ipv6init     => $ipv6init,
     ipv6address  => $ipv6address,
@@ -87,41 +88,4 @@ define network::bond::static (
     userctl      => $userctl,
   }
 
-  # Only install "alias bondN bonding" on old OSs that support
-  # /etc/modprobe.conf.
-  case $::operatingsystem {
-    /^(RedHat|CentOS|OEL|OracleLinux|SLC|Scientific)$/: {
-      case $::operatingsystemrelease {
-        /^[45]/: {
-          augeas { "modprobe.conf_${title}":
-            context => '/files/etc/modprobe.conf',
-            changes => [
-              "set alias[last()+1] ${title}",
-              'set alias[last()]/modulename bonding',
-            ],
-            onlyif  => "match alias[*][. = '${title}'] size == 0",
-            before  => Network_if_base[$title],
-          }
-        }
-        default: {}
-      }
-    }
-    'Fedora': {
-      case $::operatingsystemrelease {
-        /^(1|2|3|4|5|6|7|8|9|10|11)$/: {
-          augeas { "modprobe.conf_${title}":
-            context => '/files/etc/modprobe.conf',
-            changes => [
-              "set alias[last()+1] ${title}",
-              'set alias[last()]/modulename bonding',
-            ],
-            onlyif  => "match alias[*][. = '${title}'] size == 0",
-            before  => Network_if_base[$title],
-          }
-        }
-        default: {}
-      }
-    }
-    default: {}
-  }
 } # define network::bond::static

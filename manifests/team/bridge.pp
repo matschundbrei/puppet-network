@@ -8,13 +8,12 @@
 #   $bridge       - required
 #   $mtu          - optional
 #   $ethtool_opts - optional
-#   $bonding_opts - optional
+#   $team_config  - required - hash
 #   $restart      - optional - defaults to true
 #
 # === Actions:
 #
 # Deploys the file /etc/sysconfig/network-scripts/ifcfg-$name.
-# Updates /etc/modprobe.conf with bonding driver parameters.
 #
 # === Sample Usage:
 #
@@ -27,18 +26,18 @@
 #
 # David Cote
 # Mike Arnold <mike@razorsedge.org>
+# Jan Kapellen <jan.kapellen@gigacodes.de>
 #
 # === Copyright:
 #
-# Copyright (C) 2013 David Cote, unless otherwise noted.
 # Copyright (C) 2013 Mike Arnold, unless otherwise noted.
-#
-define network::bond::bridge (
+# Copyright (c) 2017 Jan Kapellen
+define network::team::bridge (
   Enum['up','down'] $ensure,
   String            $bridge,
   Optional[String]  $mtu          = undef,
   Optional[String]  $ethtool_opts = undef,
-  Optional[String]  $bonding_opts = 'miimon=100',
+  Hash              $team_config  = { runner => { name => 'activebackup' }, link_watch => { name => 'ethtool' }, },
   Optional[Boolean] $restart      = true,
 ) {
   network_if_base { $title:
@@ -52,46 +51,8 @@ define network::bond::bridge (
     ipv6gateway  => '',
     mtu          => $mtu,
     ethtool_opts => $ethtool_opts,
-    bonding_opts => $bonding_opts,
+    team_config  => $team_config,
     bridge       => $bridge,
     restart      => $restart,
-  }
-
-  # Only install "alias bondN bonding" on old OSs that support
-  # /etc/modprobe.conf.
-  case $::operatingsystem {
-    /^(RedHat|CentOS|OEL|OracleLinux|SLC|Scientific)$/: {
-      case $::operatingsystemrelease {
-        /^[45]/: {
-          augeas { "modprobe.conf_${title}":
-            context => '/files/etc/modprobe.conf',
-            changes => [
-              "set alias[last()+1] ${title}",
-              'set alias[last()]/modulename bonding',
-            ],
-            onlyif  => "match alias[*][. = '${title}'] size == 0",
-            before  => Network_if_base[$title],
-          }
-        }
-        default: {}
-      }
-    }
-    'Fedora': {
-      case $::operatingsystemrelease {
-        /^(1|2|3|4|5|6|7|8|9|10|11)$/: {
-          augeas { "modprobe.conf_${title}":
-            context => '/files/etc/modprobe.conf',
-            changes => [
-              "set alias[last()+1] ${title}",
-              'set alias[last()]/modulename bonding',
-            ],
-            onlyif  => "match alias[*][. = '${title}'] size == 0",
-            before  => Network_if_base[$title],
-          }
-        }
-        default: {}
-      }
-    }
-    default: {}
   }
 } # define network::bond::bridge

@@ -33,22 +33,25 @@
 # === Authors:
 #
 # Mike Arnold <mike@razorsedge.org>
+# Jan Kapellen <jan.kapellen@gigacodes.de>
 #
 # === Copyright:
 #
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
+# Copyright (C) 2017 Jan Kapellen
 #
-define network::bond::slave (
+define network::team::slave (
   String                $master,
-  Optional[Stdlib::MAC] $macaddress   = undef,
-  Optional[String]      $ethtool_opts = undef,
-  Optional[String]      $zone         = undef,
-  Optional[String]      $defroute     = undef,
-  Optional[String]      $metric       = undef,
-  Optional[Boolean]     $restart      = true,
-  Optional[Boolean]     $userctl      = false,
-  Optional[String]      $bootproto    = undef,
-  Optional[String]      $onboot       = undef,
+  Hash                  $team_port_config  = { prio => 100, },
+  Optional[Stdlib::MAC] $macaddress        = undef,
+  Optional[String]      $ethtool_opts      = undef,
+  Optional[String]      $zone              = undef,
+  Optional[String]      $defroute          = undef,
+  Optional[String]      $metric            = undef,
+  Optional[Boolean]     $restart           = true,
+  Optional[Boolean]     $userctl           = false,
+  Optional[String]      $bootproto         = undef,
+  Optional[String]      $onboot            = undef,
 ) {
   include '::network'
 
