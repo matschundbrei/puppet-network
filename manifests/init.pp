@@ -25,7 +25,7 @@
 class network {
   # Only run on RedHat derived systems.
   case $::osfamily {
-    'RedHat': { }
+    'RedHat': {}
     default: {
       fail('This network module only supports RedHat-based systems.')
     }
@@ -80,6 +80,7 @@ class network {
 #   $restart         - optional - defaults to true
 #   $arpcheck        - optional - defaults to true
 #   $vlan            - optional - defaults to 'no'
+#   $team_config     - optional
 #
 # === Actions:
 #
@@ -106,7 +107,7 @@ class network {
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
 #
 define network_if_base (
-  Enum['up','down']                                               $ensure,
+  Enum['up', 'down']                                              $ensure,
   Optional[Variant[Stdlib::MAC, String]]                          $macaddress,
   Optional[Variant[Enum[''], Stdlib::Compat::Ipv4]]               $ipaddress       = undef,
   Optional[Variant[Enum[''], Stdlib::Compat::Ipv4]]               $netmask         = undef,
@@ -135,13 +136,14 @@ define network_if_base (
   Optional[String]                                                $scope           = undef,
   Optional[Boolean]                                               $check_link_down = false,
   Optional[Boolean]                                               $flush           = false,
-  Optional[Enum['yes','no']]                                      $defroute        = undef,
+  Optional[Enum['yes', 'no']]                                     $defroute        = undef,
   Optional[String]                                                $zone            = undef,
   Optional[String]                                                $metric          = undef,
   Optional[Boolean]                                               $promisc         = false,
   Optional[Boolean]                                               $restart         = true,
   Optional[Boolean]                                               $arpcheck        = true,
-  Optional[Enum['yes','no']]                                      $vlan            = undef,
+  Optional[Enum['yes', 'no']]                                     $vlan            = undef,
+  Optional[Hash]                                                  $team_config     = undef,
 ) {
   include '::network'
 
@@ -199,7 +201,7 @@ define network_if_base (
 
   if $restart {
     File["ifcfg-${interface}"] {
-      notify  => Service['network'],
+      notify => Service['network'],
     }
   }
 } # define network_if_base
@@ -222,5 +224,5 @@ define network_if_base (
 # validate_ip_address { $ips: }
 #
 define validate_ip_address {
-  if ! is_ip_address($name) { fail("${name} is not an IP(v6) address.") }
+  if !is_ip_address($name) { fail("${name} is not an IP(v6) address.") }
 } # define validate_ip_address

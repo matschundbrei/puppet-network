@@ -2,13 +2,13 @@
 
 require 'spec_helper'
 
-describe 'network::bond::slave', :type => 'define' do
+describe 'network::team::slave', :type => 'define' do
 
   context 'incorrect value: macaddress' do
     let(:title) { 'eth6' }
     let :params do {
       :macaddress => '123456',
-      :master     => 'bond0',
+      :master     => 'team0',
     }
     end
     it 'should fail' do
@@ -17,10 +17,10 @@ describe 'network::bond::slave', :type => 'define' do
   end
 
   context 'required parameters' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
+    let(:pre_condition) { "file { 'ifcfg-team0': }" }
     let(:title) { 'eth1' }
     let :params do {
-      :master     => 'bond0',
+      :master     => 'team0',
     }
     end
     let :facts do {
@@ -41,22 +41,23 @@ describe 'network::bond::slave', :type => 'define' do
     it 'should contain File[ifcfg-eth1] with required contents' do
       verify_contents(catalogue, 'ifcfg-eth1', [
         'DEVICE=eth1',
-        'MASTER=bond0',
-        'SLAVE=yes',
-        'TYPE=Ethernet',
+        'DEVICETYPE=TeamPort',
+        'TEAM_MASTER=team0',
+        'TEAM_PORT_CONFIG=\'{"prio":100}\'',
         'NM_CONTROLLED=no',
       ])
     end
     it { should contain_service('network') }
     it { is_expected.to contain_file('ifcfg-eth1').that_notifies('Service[network]') }
+    it { should contain_package('teamd') }
   end
 
   context 'required parameters, restart => false' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
+    let(:pre_condition) { "file { 'ifcfg-team0': }" }
     let(:title) { 'eth1' }
     let :params do {
       :macaddress => 'fe:fe:fe:aa:aa:a1',
-      :master     => 'bond0',
+      :master     => 'team0',
       :restart    => false,
     }
     end
@@ -76,22 +77,23 @@ describe 'network::bond::slave', :type => 'define' do
       verify_contents(catalogue, 'ifcfg-eth1', [
         'DEVICE=eth1',
         'HWADDR=fe:fe:fe:aa:aa:a1',
-        'MASTER=bond0',
-        'SLAVE=yes',
-        'TYPE=Ethernet',
+        'DEVICETYPE=TeamPort',
+        'TEAM_MASTER=team0',
         'NM_CONTROLLED=no',
+        'TEAM_PORT_CONFIG=\'{"prio":100}\'',
       ])
     end
     it { should contain_service('network') }
     it { is_expected.to_not contain_file('ifcfg-eth1').that_notifies('Service[network]') }
+    it { should contain_package('teamd') }
   end
 
   context 'optional parameters' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
+    let(:pre_condition) { "file { 'ifcfg-master0': }" }
     let(:title) { 'eth3' }
     let :params do {
       :macaddress   => 'ef:ef:ef:ef:ef:ef',
-      :master       => 'bond0',
+      :master       => 'team0',
       :ethtool_opts => 'speed 1000 duplex full autoneg off',
       :userctl      => true,
       :bootproto    => 'dhcp',
@@ -118,17 +120,18 @@ describe 'network::bond::slave', :type => 'define' do
       verify_contents(catalogue, 'ifcfg-eth3', [
         'DEVICE=eth3',
         'HWADDR=ef:ef:ef:ef:ef:ef',
-        'MASTER=bond0',
-        'SLAVE=yes',
-        'TYPE=Ethernet',
+        'TEAM_MASTER=team0',
+        'DEVICETYPE=TeamPort',
         'ETHTOOL_OPTS="speed 1000 duplex full autoneg off"',
         'BOOTPROTO=dhcp',
         'ONBOOT=yes',
         'USERCTL=yes',
+        'TEAM_PORT_CONFIG=\'{"prio":100}\'',
         'NM_CONTROLLED=no',
       ])
     end
     it { should contain_service('network') }
+    it { should contain_package('teamd') }
   end
 
 end

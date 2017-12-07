@@ -17,7 +17,7 @@
 #
 # === Sample Usage:
 #
-#   network::bond::bridge { 'bond2':
+#   network::team::bridge { 'team2':
 #     ensure => 'up',
 #     bridge => 'br0',
 #   }
@@ -33,13 +33,16 @@
 # Copyright (C) 2013 Mike Arnold, unless otherwise noted.
 # Copyright (c) 2017 Jan Kapellen
 define network::team::bridge (
-  Enum['up','down'] $ensure,
+  Enum['up', 'down'] $ensure,
   String            $bridge,
   Optional[String]  $mtu          = undef,
   Optional[String]  $ethtool_opts = undef,
-  Hash              $team_config  = { runner => { name => 'activebackup' }, link_watch => { name => 'ethtool' }, },
+  Hash              $team_config  = { 'runner' => { 'name' => 'activebackup' }, 'link_watch' => { 'name' => 'ethtool' },
+  },
   Optional[Boolean] $restart      = true,
 ) {
+  ensure_packages(['teamd'])
+
   network_if_base { $title:
     ensure       => $ensure,
     ipaddress    => '',

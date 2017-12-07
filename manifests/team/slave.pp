@@ -42,20 +42,22 @@
 #
 define network::team::slave (
   String                $master,
-  Hash                  $team_port_config  = { prio => 100, },
-  Optional[Stdlib::MAC] $macaddress        = undef,
-  Optional[String]      $ethtool_opts      = undef,
-  Optional[String]      $zone              = undef,
-  Optional[String]      $defroute          = undef,
-  Optional[String]      $metric            = undef,
-  Optional[Boolean]     $restart           = true,
-  Optional[Boolean]     $userctl           = false,
-  Optional[String]      $bootproto         = undef,
-  Optional[String]      $onboot            = undef,
+  Hash                  $team_port_config = { 'prio' => 100, },
+  Optional[Stdlib::MAC] $macaddress       = undef,
+  Optional[String]      $ethtool_opts     = undef,
+  Optional[String]      $zone             = undef,
+  Optional[String]      $defroute         = undef,
+  Optional[String]      $metric           = undef,
+  Optional[Boolean]     $restart          = true,
+  Optional[Boolean]     $userctl          = false,
+  Optional[String]      $bootproto        = undef,
+  Optional[String]      $onboot           = undef,
 ) {
   include '::network'
 
   $interface = $name
+
+  ensure_packages(['teamd'])
 
   file { "ifcfg-${interface}":
     ensure  => 'present',
@@ -63,13 +65,13 @@ define network::team::slave (
     owner   => 'root',
     group   => 'root',
     path    => "/etc/sysconfig/network-scripts/ifcfg-${interface}",
-    content => template('network/ifcfg-bond.erb'),
+    content => template('network/ifcfg-team.erb'),
     before  => File["ifcfg-${master}"],
   }
 
   if $restart {
     File["ifcfg-${interface}"] {
-      notify  => Service['network'],
+      notify => Service['network'],
     }
   }
 } # define network::bond::slave

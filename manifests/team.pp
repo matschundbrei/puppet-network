@@ -18,26 +18,31 @@
 #
 # === Sample Usage:
 #
-#   network::bond { 'bond2':
-#     ensure => 'up',
+#   network::team { 'team2':
+#     ensure      => 'up',
+#     team_config => { runner => { name => 'activebackup' }, link_watch => { name => 'ethtool' }, },
 #   }
 #
 # === Authors:
 #
 # Jason Vervlied <jvervlied@3cinteractive.com>
+# Jan Kapellen <jan.kapellen@gigacodes.de>
 #
 # === Copyright:
 #
 # Copyright (C) 2015 Jason Vervlied, unless otherwise noted.
+# Copyright (C) 2017 Jan Kapellen
 #
 define network::team (
-  Enum['up','down']   $ensure,
+  Enum['up', 'down']  $ensure,
   Optional[String]    $mtu          = undef,
   Optional[String]    $ethtool_opts = undef,
-  Hash                $team_config  = { runner => { name => 'activebackup' }, link_watch => { name => 'ethtool' }, },
+  Hash                $team_config  = { 'runner' => { 'name' => 'activebackup' }, 'link_watch' => { 'name' => 'ethtool'
+  }, },
   Optional[String]    $zone         = undef,
   Optional[Boolean]   $restart      = true,
 ) {
+  ensure_packages(['teamd'])
 
   network_if_base { $title:
     ensure       => $ensure,
