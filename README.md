@@ -248,9 +248,9 @@ Static interface routes (host route):
 Normal interface - VLAN - no IP:
 
     network::if { 'eth0.330':
-      ensure => 'up',
-      vlan => 'yes',
-   }
+        ensure => 'up',
+        vlan => 'yes',
+    }
 
 Normal interface - VLAN - static IPv4:
 
@@ -261,6 +261,22 @@ Normal interface - VLAN - static IPv4:
       vlan => 'yes',
     }
 
+Teamd interface:
+
+    network::team::static { 'team5':
+      ensure   => 'up'
+      ipaddress => '10.4.5.6',
+      netmask => '255.255.255.0',
+      team_config => { 'runner' => { 'name' => 'activebackup' }, 'link_watch' => { 'name' => 'ethtool'
+      }, },
+    }
+
+Teamd slave interface:
+
+    network::team::slave { 'em47':
+      ensure => 'up',
+      master => 'team5',
+   }
 
 Promiscuous interface:
     To set a static or dynamic interface to promiscuous mode (RedHat only), add:
