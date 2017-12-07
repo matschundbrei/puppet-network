@@ -261,6 +261,8 @@ Normal interface - VLAN - static IPv4:
       vlan => 'yes',
     }
 
+We now also support team interfaces (teamd) for RHEL/CentOS versions supporting teamd.
+
 Teamd interface:
 
     network::team::static { 'team5':
@@ -276,7 +278,7 @@ Teamd slave interface:
     network::team::slave { 'em47':
       ensure => 'up',
       master => 'team5',
-   }
+    }
 
 Promiscuous interface:
     To set a static or dynamic interface to promiscuous mode (RedHat only), add:
