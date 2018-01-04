@@ -276,7 +276,6 @@ Teamd interface:
 Teamd slave interface:
 
     network::team::slave { 'em47':
-      ensure => 'up',
       master => 'team5',
     }
 

@@ -91,4 +91,4 @@ define network::team::static (
     userctl      => $userctl,
   }
 
-} # define network::bond::static
+} # define network::team::static

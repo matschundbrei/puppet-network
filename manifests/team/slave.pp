@@ -53,7 +53,6 @@ define network::team::slave (
   Optional[String]      $bootproto        = undef,
   Optional[String]      $onboot           = undef,
 ) {
-  include '::network'
 
   $interface = $name
 
@@ -74,4 +73,4 @@ define network::team::slave (
       notify => Service['network'],
     }
   }
-} # define network::bond::slave
+} # define network::team::slave

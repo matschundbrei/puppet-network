@@ -59,4 +59,4 @@ define network::team (
     zone         => $zone,
     restart      => $restart,
   }
-} # define network::bond
+} # define network::team

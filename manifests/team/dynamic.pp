@@ -65,4 +65,4 @@ define network::team::dynamic (
     metric       => $metric,
     restart      => $restart,
   }
-} # define network::bond::dynamic
+} # define network::team::dynamic

@@ -58,4 +58,4 @@ define network::team::bridge (
     bridge       => $bridge,
     restart      => $restart,
   }
-} # define network::bond::bridge
+} # define network::team::bridge
