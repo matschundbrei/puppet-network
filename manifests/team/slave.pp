@@ -57,6 +57,8 @@ define network::team::slave (
 
   $interface = $name
 
+  ensure_packages(['teamd'])
+
   file { "ifcfg-${interface}":
     ensure  => 'present',
     mode    => '0644',

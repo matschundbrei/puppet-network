@@ -65,6 +65,7 @@ define network::team::static (
   Optional[Boolean]                $restart      = true,
   Optional[Boolean]                $userctl      = undef,
 ) {
+  ensure_packages(['teamd'])
   network_if_base { $title:
     ensure       => $ensure,
     ipaddress    => $ipaddress,
