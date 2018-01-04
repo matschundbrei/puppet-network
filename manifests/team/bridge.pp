@@ -41,8 +41,6 @@ define network::team::bridge (
   },
   Optional[Boolean] $restart      = true,
 ) {
-  ensure_packages(['teamd'])
-
   network_if_base { $title:
     ensure       => $ensure,
     ipaddress    => '',

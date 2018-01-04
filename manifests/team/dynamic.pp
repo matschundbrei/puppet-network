@@ -47,7 +47,6 @@ define network::team::dynamic (
   Optional[String]  $metric       = undef,
   Optional[Boolean] $restart      = true,
 ) {
-  ensure_packages(['teamd'])
   network_if_base { $title:
     ensure       => $ensure,
     ipaddress    => '',

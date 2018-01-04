@@ -53,10 +53,9 @@ define network::team::slave (
   Optional[String]      $bootproto        = undef,
   Optional[String]      $onboot           = undef,
 ) {
+  include '::network'
 
   $interface = $name
-
-  ensure_packages(['teamd'])
 
   file { "ifcfg-${interface}":
     ensure  => 'present',
